@@ -16,6 +16,7 @@
 ```bash
 $ DATABASE_URL=
 $ JWT_SECRET=
+$ PORT=
 ```
 
 ## Project setup
