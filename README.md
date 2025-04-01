@@ -11,6 +11,7 @@
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 ## Create env
+# Can you see the example in the file env.example
 
 ```bash
 $ DATABASE_URL=
