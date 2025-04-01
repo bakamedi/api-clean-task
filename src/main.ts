@@ -3,7 +3,7 @@ import { AppModule } from './core/app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { ResponseInterceptor } from './core/infrastructure/interceptors/response.interceptor';
 import { HttpExceptionFilter } from './core/infrastructure/exceptions/http-exception.filter';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { setupSwagger } from './core/infrastructure/config/swagger.setup';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -17,19 +17,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ResponseInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  const config = new DocumentBuilder()
-    .setTitle('Tasks API')
-    .setDescription('The tasks API description')
-    .setVersion('1.0')
-    .addTag('Tasks')
-    .addTag('Users')
-    .addBearerAuth()
-    .build();
-
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory, {
-    jsonDocumentUrl: 'swagger/json',
-  });
+  setupSwagger(app);
 
   await app.listen(process.env.PORT ?? 3000);
 }
