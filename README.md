@@ -9,7 +9,17 @@
 ## Description
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
+```bash
+src/
+├── core/               # Lógica transversal y configuración base
+│   ├── api/            # Módulos principales de la aplicación
+│   ├── config/         # Configuraciones globales
+│   ├── exceptions/     # Manejo de errores
+│   ├── interceptors/   # Interceptores de peticiones/respuestas
+│   ├── middleware/     # Middlewares globales
+│   ├── shared/         # Utilidades compartidas
+│   └── main.ts         # Punto de entrada
+```
 ## Create env
 ### Can you see the example in the file env.example
 
@@ -17,6 +27,7 @@
 $ DATABASE_URL=
 $ JWT_SECRET=
 $ PORT=
+$ ORIGIN_URL=
 ```
 
 ## Project setup
