@@ -8,7 +8,7 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Framework TypeScript repository of TASK.
 ```bash
 src/
 ├── core/               # Lógica transversal y configuración base
