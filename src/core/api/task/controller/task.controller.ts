@@ -67,6 +67,7 @@ export class TaskController {
     @Req() req: Request,
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
+    @Query('completed') completed?: boolean,
   ) {
     const userId = (req['userId'] as string | undefined) ?? '';
     page = page && Number.isInteger(page) ? page : 1;
@@ -75,6 +76,7 @@ export class TaskController {
       userId,
       page,
       limit,
+      completed,
     });
   }
 

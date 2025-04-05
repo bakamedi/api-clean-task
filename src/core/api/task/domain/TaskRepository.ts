@@ -15,11 +15,16 @@ export class TaskRepository implements ITask {
     userId: string,
     page: number,
     limit: number,
+    completed?: boolean,
   ): Promise<PaginatedResponse<Task>> {
     const offset = (page - 1) * limit;
+    const whereClause = { 
+      userId: userId,
+      ...(completed !== undefined ? { completed } : {})
+    };
     const tasks: Task[] = (
       await this.prisma.task.findMany({
-        where: { userId: userId },
+        where: whereClause,
         skip: offset,
         take: limit,
       })
