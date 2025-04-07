@@ -63,6 +63,7 @@ export class TaskController {
   @ApiQuery({ name: "page", required: false, example: 1 })
   @ApiQuery({ name: "limit", required: false, example: 10 })
   @ApiQuery({ name: "completed", required: false, example: false })
+  @ApiQuery({ name: "search", required: false, example: "nombre_titulo" })
   @ApiResponse({ status: 200, description: "Lista de tareas obtenida" })
   findAll(
     @Req() req: Request,
