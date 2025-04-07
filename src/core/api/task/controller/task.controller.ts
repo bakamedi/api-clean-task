@@ -62,6 +62,7 @@ export class TaskController {
   @ApiOperation({ summary: 'Obtener todas las tareas paginadas' })
   @ApiQuery({ name: 'page', required: false, example: 1 })
   @ApiQuery({ name: 'limit', required: false, example: 10 })
+  @ApiQuery({ name: 'completed', required: false, example: false })
   @ApiResponse({ status: 200, description: 'Lista de tareas obtenida' })
   findAll(
     @Req() req: Request,
