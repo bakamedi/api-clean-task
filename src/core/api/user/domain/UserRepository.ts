@@ -54,6 +54,7 @@ export class UserRepository implements IUser {
     } | null = await this.prisma.user.update({
       where: { id: id },
       data: {
+        email: updateData.email,
         firstName: updateData.firstName,
         lastName: updateData.lastName,
         fullName: `${updateData.firstName} ${updateData.lastName}`,
