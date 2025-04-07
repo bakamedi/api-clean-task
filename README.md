@@ -28,12 +28,22 @@ $ DATABASE_URL=
 $ JWT_SECRET=
 $ PORT=
 $ ORIGIN_URL=
+$ POSTGRES_USER=
+$ POSTGRES_PASSWORD=
+$ POSTGRES_DB=
+$ POSTGRES_PORT=
 ```
 
 ## Project setup
 
 ```bash
 $ yarn install
+```
+
+## Docker setup
+
+```bash
+docker-compose up -d
 ```
 
 ## Prisma execute

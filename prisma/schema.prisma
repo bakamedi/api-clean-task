@@ -2,11 +2,12 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["prismaSchemaFolder"]
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -31,4 +32,6 @@ model Task {
   // Relación uno a muchos con User
   userId String @map("user_id") // Clave foránea
   user   User   @relation(fields: [userId], references: [id]) // Relación
+
+  @@index([title])
 }

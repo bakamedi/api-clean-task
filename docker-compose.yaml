@@ -1,0 +1,17 @@
+
+services:
+  postgres:
+    image: postgres:latest  # Usa la imagen más reciente de PostgreSQL
+    container_name: task-container  # Opcional, puedes nombrar el contenedor
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:5432"  # Expone el puerto 5432 en el contenedor a tu máquina en el puerto 5404
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Para que los datos persistan
+
+volumes:
+  postgres_data:
+    driver: local  # Usa un volumen local para almacenar los datos de la base de datos

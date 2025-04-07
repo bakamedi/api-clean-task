@@ -1,11 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { ITask } from './interfaces/ITask';
-import { CreateTaskDTO } from '../dtos/create-task.dto';
-import { UpdateTaskDTO } from '../dtos/update-task.dto';
-import { PrismaService } from 'src/core/database/services/prisma.service';
-import { Task } from './Task';
-import { PaginatedResponse } from 'src/shared/interfaces/paginated.interface';
-import { NotFoundError } from 'src/shared/utils/exceptions';
+import { Injectable } from "@nestjs/common";
+import { ITask } from "./interfaces/ITask";
+import { CreateTaskDTO } from "../dtos/create-task.dto";
+import { UpdateTaskDTO } from "../dtos/update-task.dto";
+import { PrismaService } from "src/core/database/services/prisma.service";
+import { Task } from "./Task";
+import { PaginatedResponse } from "src/shared/interfaces/paginated.interface";
+import { NotFoundError } from "src/shared/utils/exceptions";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class TaskRepository implements ITask {
@@ -16,26 +17,37 @@ export class TaskRepository implements ITask {
     page: number,
     limit: number,
     completed?: boolean,
+    search?: string
   ): Promise<PaginatedResponse<Task>> {
     const offset = (page - 1) * limit;
-    const whereClause = { 
+    const whereClause: Prisma.TaskWhereInput = {
       userId: userId,
-      ...(completed !== undefined ? { completed } : {})
+      ...(completed !== undefined ? { completed } : {}),
+      ...(search
+        ? {
+            title: {
+              contains: search,
+              mode: "insensitive" as const,
+            },
+          }
+        : {}),
     };
+
     const tasks: Task[] = (
       await this.prisma.task.findMany({
         where: whereClause,
         skip: offset,
         take: limit,
+        omit: {
+          userId: true,
+        },
       })
     ).map((task) => ({
       ...task,
-      description: task.description ?? 'No description provided',
+      description: task.description ?? "No description provided",
     }));
     const totalTasks = await this.prisma.task.count({
-      where: {
-        userId: userId,
-      },
+      where: whereClause,
     });
     const totalPages = Math.ceil(totalTasks / limit);
     return {
@@ -63,13 +75,13 @@ export class TaskRepository implements ITask {
     });
 
     if (!taskFound) {
-      throw new NotFoundError('Task not found');
+      throw new NotFoundError("Task not found");
     }
 
     return {
       id: taskFound.id,
       title: taskFound.title,
-      description: taskFound.description ?? 'No description provided',
+      description: taskFound.description ?? "No description provided",
       completed: taskFound.completed,
     };
   }
@@ -86,7 +98,7 @@ export class TaskRepository implements ITask {
     return {
       id: taskCreated.id,
       title: taskCreated.title,
-      description: taskCreated.description ?? '',
+      description: taskCreated.description ?? "",
       completed: taskCreated.completed,
     };
   }
@@ -103,7 +115,7 @@ export class TaskRepository implements ITask {
     });
 
     if (!taskFound) {
-      throw new NotFoundError('Task not found');
+      throw new NotFoundError("Task not found");
     }
 
     const taskUpdated = await this.prisma.task.update({
@@ -118,7 +130,7 @@ export class TaskRepository implements ITask {
     return {
       id: taskUpdated.id,
       title: taskUpdated.title,
-      description: taskUpdated.description ?? '',
+      description: taskUpdated.description ?? "",
       completed: taskUpdated.completed,
     };
   }
@@ -135,7 +147,7 @@ export class TaskRepository implements ITask {
     });
 
     if (!taskFound) {
-      throw new NotFoundError('Task not found');
+      throw new NotFoundError("Task not found");
     }
     const taskDeleted = await this.prisma.task.delete({
       where: { id: id, userId: userId },
@@ -143,7 +155,7 @@ export class TaskRepository implements ITask {
     return {
       id: taskDeleted.id,
       title: taskDeleted.title,
-      description: taskDeleted.description ?? '',
+      description: taskDeleted.description ?? "",
       completed: taskDeleted.completed,
     };
   }

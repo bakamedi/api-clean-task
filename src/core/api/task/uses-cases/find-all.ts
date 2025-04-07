@@ -10,6 +10,7 @@ interface FindAllTasksRequest {
   page: number;
   limit: number;
   completed?: boolean;
+  search?: string;
 }
 
 @Injectable()
@@ -21,10 +22,16 @@ export class FindAllTaskUseCase
   async execute(
     request: FindAllTasksRequest
   ): Promise<PaginatedResponse<Task>> {
-    const { userId, page, limit, completed } = request;
+    const { userId, page, limit, completed, search } = request;
     if (!userId || page === undefined || limit === undefined) {
       throw new MissingParameterError("Missing required parameters");
     }
-    return await this.taskRepository.findAll(userId, page, limit, completed);
+    return await this.taskRepository.findAll(
+      userId,
+      page,
+      limit,
+      completed,
+      search
+    );
   }
 }
