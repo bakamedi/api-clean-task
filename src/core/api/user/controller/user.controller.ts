@@ -30,6 +30,7 @@ import {
 } from "@nestjs/swagger";
 import { diskStorage } from "multer";
 import { extname } from "path";
+import * as fs from "fs";
 import { FileInterceptor } from "@nestjs/platform-express/multer";
 
 @ApiTags("Users")
@@ -68,16 +69,19 @@ export class UserController {
 
   @Post("upload")
   @ApiOperation({ summary: "Subir imagen del usuario" })
-  @ApiConsumes('multipart/form-data')
+  @ApiConsumes("multipart/form-data")
   @ApiResponse({ status: 401, description: "No autorizado" })
-  @ApiResponse({ status: 400, description: "Solo se permiten imágenes PNG, JPG, JPEG o WEBP" })
+  @ApiResponse({
+    status: 400,
+    description: "Solo se permiten imágenes PNG, JPG, JPEG o WEBP",
+  })
   @ApiResponse({ status: 200, description: "Archivo subido correctamente" })
   @UseInterceptors(
     FileInterceptor("file", {
       storage: diskStorage({
         destination: (req, file, cb) => {
-          const userId = req["userId"]; // aquí usas el userId del token
-          const uploadPath = `./uploads/${userId}`;
+          const userId = req["userId"]; // Usa el userId del token
+          const uploadPath = `./public/uploads/${userId}`;
 
           const fs = require("fs");
           if (!fs.existsSync(uploadPath)) {
@@ -88,10 +92,18 @@ export class UserController {
         },
 
         filename: (req, file, cb) => {
-          const uniqueSuffix =
-            Date.now() + "-" + Math.round(Math.random() * 1e9);
+          const userId = req["userId"];
           const ext = extname(file.originalname);
-          cb(null, `${uniqueSuffix}${ext}`);
+          const filename = `${userId}${ext}`; // Aquí usas el userId o cualquier identificador único como nombre
+
+          // Verificar si el archivo ya existe y eliminarlo
+          const filePath = `./public/uploads/${userId}/${filename}`;
+          if (fs.existsSync(filePath)) {
+            // Elimina el archivo existente
+            fs.unlinkSync(filePath);
+          }
+
+          cb(null, filename); // Guardar el nuevo archivo con el mismo nombre
         },
       }),
       limits: {
@@ -106,7 +118,9 @@ export class UserController {
 
         if (!allowedTypes.includes(file.mimetype)) {
           return cb(
-            new FileUploadError("Solo se permiten imágenes PNG, JPG, JPEG o WEBP"),
+            new FileUploadError(
+              "Solo se permiten imágenes PNG, JPG, JPEG o WEBP"
+            ),
             false
           );
         }
