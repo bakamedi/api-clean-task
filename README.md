@@ -5,10 +5,10 @@
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
-
 ## Description
 
 Framework TypeScript repository of TASK.
+
 ```bash
 src/
 ├── core/               # Lógica transversal y configuración base
@@ -20,7 +20,9 @@ src/
 │   ├── shared/         # Utilidades compartidas
 │   └── main.ts         # Punto de entrada
 ```
+
 ## Create env
+
 ### Can you see the example in the file env.example
 
 ```bash
@@ -42,11 +44,14 @@ $ yarn install
 
 ## Docker setup
 
+1. First install docker on your computer
+
 ```bash
 docker-compose up -d
 ```
 
 ## Prisma execute
+
 ```bash
 $ npx prisma migrate dev --name init
 
@@ -78,3 +83,12 @@ $ yarn run test:e2e
 # test coverage
 $ yarn run test:cov
 ```
+
+# Run Swager
+
+On the brower put the follow link
+
+```bash
+http://localhost:3000/api/#/
+```
+![Demo del proyecto](assets/swager.png)
