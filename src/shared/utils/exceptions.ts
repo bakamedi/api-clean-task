@@ -184,6 +184,22 @@ class ConflictError extends CustomError {
   }
 }
 
+class FileUploadError extends CustomError {
+  readonly _tag = 'FileUploadError';
+  status: number;
+
+  constructor(
+    public message: string = 'Error uploading file',
+    status: number = HttpStatus.BAD_REQUEST,
+    cause?: string,
+  ) {
+    super(message, status, cause);
+    this.cause = cause;
+    this.status = status;
+    this.name = this._tag;
+  }
+}
+
 /** InternalServerError
  * For unexpected server errors.
  */
@@ -252,4 +268,5 @@ export {
   TimeoutError,
   ServiceUnavailableError,
   UserIdError,
+  FileUploadError,
 };
