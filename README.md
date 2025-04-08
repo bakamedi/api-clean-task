@@ -47,7 +47,7 @@ $ yarn install
 1. First install docker on your computer
 
 ```bash
-docker-compose up -d
+$ docker-compose up -d
 ```
 
 ## Prisma execute
