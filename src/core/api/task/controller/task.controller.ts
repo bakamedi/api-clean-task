@@ -25,19 +25,12 @@ import { UpdateTaskUseCase } from "../uses-cases/update";
 import { UpdateTaskDTO, UpdateTaskDTOClass } from "../dtos/update-task.dto";
 import { FindByIdTaskUseCase } from "../uses-cases/find-by-id";
 import { DeleteTaskUseCase } from "../uses-cases/delete";
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from "@nestjs/swagger";
+import { ApiSwagger, ApiTagsDecorator } from "src/shared/decorators/api-swagger.decorator"; // Importa el decorador
 
-@ApiTags("Tasks")
-@ApiBearerAuth()
 @Controller("tasks")
 @UseGuards(JwtAuthGuard)
+
+@ApiTagsDecorator(["Tasks"])
 export class TaskController {
   constructor(
     private readonly createTaskUseCase: CreateTaskUseCase,
@@ -48,10 +41,14 @@ export class TaskController {
   ) {}
 
   @Post("")
-  @ApiOperation({ summary: "Crear una nueva tarea" })
-  @ApiBody({ type: CreateTaskDTOClass })
-  @ApiResponse({ status: 201, description: "Tarea creada exitosamente" })
-  @ApiResponse({ status: 400, description: "Datos inválidos" })
+  @ApiSwagger({
+    summary: "Crear una nueva tarea",
+    bodyType: CreateTaskDTOClass,
+    responses: [
+      { status: 201, description: "Tarea creada exitosamente" },
+      { status: 400, description: "Datos inválidos" },
+    ],
+  })
   @UsePipes(new ZodValidationPipe(CreateTaskSchema))
   create(@Body() body: CreateTaskDTO, @Req() req: Request) {
     const userId = (req["userId"] as string | undefined) ?? "";
@@ -59,18 +56,24 @@ export class TaskController {
   }
 
   @Get()
-  @ApiOperation({ summary: "Obtener todas las tareas paginadas" })
-  @ApiQuery({ name: "page", required: false, example: 1 })
-  @ApiQuery({ name: "limit", required: false, example: 10 })
-  @ApiQuery({ name: "completed", required: false, example: false })
-  @ApiQuery({ name: "search", required: false, example: "nombre_titulo" })
-  @ApiResponse({ status: 200, description: "Lista de tareas obtenida" })
+  @ApiSwagger({
+    summary: "Obtener todas las tareas paginadas",
+    queryParams: [
+      { name: "page", required: false, example: 1 },
+      { name: "limit", required: false, example: 10 },
+      { name: "completed", required: false, example: false },
+      { name: "search", required: false, example: "nombre_titulo" },
+    ],
+    responses: [
+      { status: 200, description: "Lista de tareas obtenida" },
+    ],
+  })
   findAll(
     @Req() req: Request,
     @Query("page") page: number = 1,
     @Query("limit") limit: number = 10,
     @Query("completed") completed?: boolean,
-    @Query("search") search?: string,
+    @Query("search") search?: string
   ) {
     const userId = (req["userId"] as string | undefined) ?? "";
     page = page && Number.isInteger(page) ? page : 1;
@@ -85,10 +88,14 @@ export class TaskController {
   }
 
   @Put(":id")
-  @ApiOperation({ summary: "Actualizar una tarea" })
-  @ApiBody({ type: UpdateTaskDTOClass })
-  @ApiResponse({ status: 200, description: "Tarea actualizada exitosamente" })
-  @ApiResponse({ status: 404, description: "Tarea no encontrada" })
+  @ApiSwagger({
+    summary: "Actualizar una tarea",
+    bodyType: UpdateTaskDTOClass,
+    responses: [
+      { status: 200, description: "Tarea actualizada exitosamente" },
+      { status: 404, description: "Tarea no encontrada" },
+    ],
+  })
   update(
     @Param("id") id: string,
     @Body() updateTaskDTO: UpdateTaskDTO,
@@ -103,18 +110,26 @@ export class TaskController {
   }
 
   @Get(":id")
-  @ApiOperation({ summary: "Obtener una tarea por ID" })
-  @ApiResponse({ status: 200, description: "Tarea encontrada" })
-  @ApiResponse({ status: 404, description: "Tarea no encontrada" })
+  @ApiSwagger({
+    summary: "Obtener una tarea por ID",
+    responses: [
+      { status: 200, description: "Tarea encontrada" },
+      { status: 404, description: "Tarea no encontrada" },
+    ],
+  })
   findByID(@Param("id") id: string, @Req() req: Request) {
     const userId = (req["userId"] as string | undefined) ?? "";
     return this.findByIdTaskUseCase.execute(id, userId);
   }
 
   @Delete(":id")
-  @ApiOperation({ summary: "Eliminar una tarea" })
-  @ApiResponse({ status: 200, description: "Tarea eliminada exitosamente" })
-  @ApiResponse({ status: 404, description: "Tarea no encontrada" })
+  @ApiSwagger({
+    summary: "Eliminar una tarea",
+    responses: [
+      { status: 200, description: "Tarea eliminada exitosamente" },
+      { status: 404, description: "Tarea no encontrada" },
+    ],
+  })
   delete(@Param("id") id: string, @Req() req: Request) {
     const userId = (req["userId"] as string | undefined) ?? "";
     return this.deleteTaskUseCase.execute(id, userId);

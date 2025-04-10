@@ -1,4 +1,9 @@
-import { Body, Controller, Post, UsePipes } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UsePipes,
+} from '@nestjs/common';
 import {
   CreateUserDto,
   CreateUserDtoClass,
@@ -12,9 +17,9 @@ import {
   LoginUserDtoClass,
   LoginUserSchema,
 } from '../dtos/login-user.dtos';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiSwagger, ApiTagsDecorator } from 'src/shared/decorators/api-swagger.decorator'; // Importa los decoradores
 
-@ApiTags('Authentication')
+@ApiTagsDecorator(['Authentication']) // Etiquetas para Swagger
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -23,23 +28,31 @@ export class AuthController {
   ) {}
 
   @Post('register')
-  @ApiOperation({ summary: 'Registrar un nuevo usuario' })
-  @ApiBody({ type: CreateUserDtoClass })
-  @ApiResponse({ status: 201, description: 'Usuario creado exitosamente.' })
-  @ApiResponse({ status: 409, description: 'El usuario ya existe.' })
-  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  @ApiSwagger({
+    summary: 'Registrar un nuevo usuario',
+    bodyType: CreateUserDtoClass,
+    responses: [
+      { status: 201, description: 'Usuario creado exitosamente.' },
+      { status: 409, description: 'El usuario ya existe.' },
+      { status: 500, description: 'Error interno del servidor.' },
+    ],
+  })
   @UsePipes(new ZodValidationPipe(CreateUserSchema))
   create(@Body() body: CreateUserDto) {
     return this.registerUseCase.execute(body);
   }
 
   @Post('login')
-  @ApiOperation({ summary: 'Autenticar un usuario' })
-  @ApiBody({ type: LoginUserDtoClass })
-  @ApiResponse({ status: 200, description: 'Autenticación exitosa.' })
-  @ApiResponse({ status: 404, description: 'El usuario no existe.' })
-  @ApiResponse({ status: 401, description: 'Error en la autenticación.' })
-  @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
+  @ApiSwagger({
+    summary: 'Autenticar un usuario',
+    bodyType: LoginUserDtoClass,
+    responses: [
+      { status: 200, description: 'Autenticación exitosa.' },
+      { status: 404, description: 'El usuario no existe.' },
+      { status: 401, description: 'Error en la autenticación.' },
+      { status: 500, description: 'Error interno del servidor.' },
+    ],
+  })
   @UsePipes(new ZodValidationPipe(LoginUserSchema))
   login(@Body() body: LoginUserDto) {
     return this.loginUseCase.execute(body);

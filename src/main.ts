@@ -4,10 +4,13 @@ import { ValidationPipe } from "@nestjs/common";
 import { ResponseInterceptor } from "./core/infrastructure/interceptors/response.interceptor";
 import { HttpExceptionFilter } from "./core/infrastructure/exceptions/http-exception.filter";
 import { setupSwagger } from "./core/infrastructure/config/swagger.setup";
+import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix("v1/api");
+  
+  // Configuraciones globales
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -24,7 +27,10 @@ async function bootstrap() {
 
   setupSwagger(app);
 
-  await app.listen(process.env.PORT ?? 3000);
+  // Imprimir log cuando el servidor se haya levantado
+  await app.listen(process.env.PORT ?? 3000, () => {
+    Logger.log(`Server running on port ${process.env.PORT ?? 3000}`, 'Bootstrap');
+  });
 }
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
