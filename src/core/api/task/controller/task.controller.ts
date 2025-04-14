@@ -29,7 +29,6 @@ import { ApiSwagger, ApiTagsDecorator } from "src/shared/decorators/api-swagger.
 
 @Controller("tasks")
 @UseGuards(JwtAuthGuard)
-
 @ApiTagsDecorator(["Tasks"])
 export class TaskController {
   constructor(
